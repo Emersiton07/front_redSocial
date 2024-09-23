@@ -22,7 +22,7 @@ function SocialPage() {
   }, []); // Se ejecuta una vez al montar el componente
 
   if (loading) {
-    return <p>Cargando obras murales...</p>; // Mensaje de carga
+    return <p>Cargando obras murales 3...</p>; // Mensaje de carga
   }
 
   if (error) {
