@@ -90,36 +90,33 @@ function App() {
               {/* Contenedor para mapa, panel de información y filtros */}
               <div style={{ display: 'flex', height: 'calc(100vh - 60px)', width: '100vw' }}>
                 {/* Panel de información del marcador */}
-                <div
-                  style={{
-                    width: '20%', // Ajusta el ancho del panel de información
-                    height: '100%',
-                    backgroundColor: 'black',
-                    padding: '20px',
-                    border: '1px solid #ddd',
-                    overflowY: 'auto',
-                    color: 'white',
-                  }}
-                >
-                  {selectedMarker ? (
-                    <div>
-                      <h2>{selectedMarker.name}</h2>
-                      <p>{selectedMarker.description}</p>
-                      <p>
-                        Coordenadas: Latitud {selectedMarker.latitude}, Longitud {selectedMarker.longitude}
-                      </p>
-                      {selectedMarker.imageUrl && (
-                        <img
-                          src={selectedMarker.imageUrl}
-                          alt={selectedMarker.name}
-                          style={{ width: '100%', height: 'auto', marginTop: '10px' }}
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <p>Haz clic en un marcador para ver la información.</p>
-                  )}
-                </div>
+                <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+  {selectedMarker ? (
+    <>
+      <a href="#">
+        <img className="rounded-t-lg" src={selectedMarker.imageUrl} alt={selectedMarker.name} />
+      </a>
+      <div className="p-5">
+        <a href="#">
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"> {selectedMarker.name} </h5>
+        </a>
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.description}</p>
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.category}</p>
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.rating}</p>
+        <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Read more
+          <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+          </svg>
+        </a>
+      </div>
+    </>
+  ) : (
+    <div className="p-5 text-gray-500">
+      <p>No hay marcador seleccionado. Haz clic en un marcador en el mapa para ver más información.</p>
+    </div>
+  )}
+</div>
 
                 {/* Mapa de Mapbox */}
                 <div style={{ width: '60%', height: '100%' }}>
