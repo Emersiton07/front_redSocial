@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
@@ -8,42 +9,21 @@ import Avatar from '@mui/material/Avatar'; // Material UI Avatar para el compone
 function App() {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [filters, setFilters] = useState({
-    category: 'all',
-    rating: 'all',
+    promedio_calificaciones: 'all',
   });
+  const [obras, setObras] = useState([]); // Aquí guardaremos las obras obtenidas desde el backend
 
-  const tunjaMarkers = [
-    {
-      id: 1,
-      name: 'Plaza de Bolívar',
-      description: 'La principal plaza pública de Tunja.',
-      latitude: 5.5353,
-      longitude: -73.3577,
-      category: 'historical',
-      rating: 5,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Tunja_centro_historico7.jpg',
-    },
-    {
-      id: 2,
-      name: 'Catedral Basílica Metropolitana Santiago de Tunja',
-      description: 'Catedral histórica en Tunja.',
-      latitude: 5.5351,
-      longitude: -73.3579,
-      category: 'religious',
-      rating: 4,
-      imageUrl: 'https://example.com/catedral-tunja.jpg',
-    },
-    {
-      id: 3,
-      name: 'Puente de Boyacá',
-      description: 'Lugar histórico donde se libró la Batalla de Boyacá.',
-      latitude: 5.4545,
-      longitude: -73.3619,
-      category: 'historical',
-      rating: 5,
-      imageUrl: 'https://example.com/puente-boyaca.jpg',
-    },
-  ];
+  useEffect(() => {
+    // Hacer la solicitud para obtener las obras desde el backend
+    axios.get('http://localhost:3000/obras/obtenerObras')
+      .then((response) => {
+        setObras(response.data); // Guardar las obras en el estado
+        console.log('obras obtenidas', response.data);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las obras:', error);
+      });
+  }, []);
 
   const handleMarkerClick = (marker) => {
     setSelectedMarker(marker);
@@ -56,17 +36,16 @@ function App() {
     });
   };
 
-  const filteredMarkers = tunjaMarkers.filter((marker) => {
+  const filteredMarkers = obras.filter((marker) => {
     return (
-      (filters.category === 'all' || marker.category === filters.category) &&
-      (filters.rating === 'all' || marker.rating >= parseInt(filters.rating))
+      (filters.promedio_calificaciones === 'all' || marker.promedio_calificaciones.toString() === filters.promedio_calificaciones) 
+      //&& (filters.rating === 'all' || marker.rating >= parseInt(filters.rating))
     );
   });
 
   const handleAvatarClick = () => {
     if (selectedMarker) {
       alert(`Acción realizada sobre la obra: ${selectedMarker.name}`);
-      // Puedes agregar aquí la lógica adicional, como abrir un modal, etc.
     } else {
       alert('Selecciona una obra primero.');
     }
@@ -84,39 +63,37 @@ function App() {
                 <Link to="/social">
                   <button>Botón 1</button>
                 </Link>
-                <button onClick={() => alert('Botón 2')}>Botón 2</button>
+                <button onClick={() => alert('Botón 2')}>boton 2</button>
+                <p></p>
               </div>
 
               {/* Contenedor para mapa, panel de información y filtros */}
               <div style={{ display: 'flex', height: 'calc(100vh - 60px)', width: '100vw' }}>
                 {/* Panel de información del marcador */}
                 <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-  {selectedMarker ? (
-    <>
-      <a href="#">
-        <img className="rounded-t-lg" src={selectedMarker.imageUrl} alt={selectedMarker.name} />
-      </a>
-      <div className="p-5">
-        <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"> {selectedMarker.name} </h5>
-        </a>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.description}</p>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.category}</p>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.rating}</p>
-        <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-          Read more
-          <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-          </svg>
-        </a>
-      </div>
-    </>
-  ) : (
-    <div className="p-5 text-gray-500">
-      <p>No hay marcador seleccionado. Haz clic en un marcador en el mapa para ver más información.</p>
-    </div>
-  )}
-</div>
+                  {selectedMarker ? (
+                    <>
+                      <a href="#">
+                        <img className="rounded-t-lg" src={selectedMarker.imagenes} alt={selectedMarker.nombre} />
+                      </a>
+                      <div className="p-5">
+                        <a href="#">
+                          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"> {selectedMarker.nombre} </h5>
+                        </a>
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.descripcion}</p>
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.etiquetas}</p>
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.promedio_calificaciones}</p>
+                        <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                          Read more
+                        </a>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-5 text-gray-500">
+                      <p>No hay marcador seleccionado. Haz clic en un marcador en el mapa para ver más información.</p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Mapa de Mapbox */}
                 <div style={{ width: '60%', height: '100%' }}>
@@ -128,16 +105,32 @@ function App() {
                     }}
                     style={{ width: '100%', height: '100%' }}
                     mapStyle="mapbox://styles/mapbox/streets-v11"
-                    mapboxAccessToken="pk.eyJ1IjoiZW1lcnNvbjA3IiwiYSI6ImNsd3B2MWhyejF0YmYya3Jpc25vaHkzeWoifQ.3EyxjqBmu8jI1s6TU3kpQg"
+                    mapboxAccessToken="pk.eyJ1IjoiZW1lcnNvbjA3IiwiYSI6ImNtNmNtM3IxczBrc3gyanE0aGN1eTlmOWYifQ.jw_Yp6JZCKeMeq0zEDzvmg"
                   >
-                    {filteredMarkers.map((marker) => (
-                      <Marker
-                        key={marker.id}
-                        latitude={marker.latitude}
-                        longitude={marker.longitude}
-                        onClick={() => handleMarkerClick(marker)}
-                      />
-                    ))}
+                  {filteredMarkers.map((marker) => {
+                    
+                    const lat  = marker.ubicacion.latitud;
+                    const lon  = marker.ubicacion.longitud;
+                    console.log("AQUI", lat); // Esto te ayuda a verificar si _id está presente
+                    console.log("AQUI 2", lon);
+                    if (!isNaN(lat) && !isNaN(lon)) {
+                      return (
+                        <Marker
+                          key={marker._id}
+                          latitude={lat}
+                          longitude={lon}
+                          onClick={() => handleMarkerClick(marker)}
+                          offsetTop={-30}
+                        />
+                      );
+                      
+                    } else {
+                      console.error("Latitud o Longitud inválidas:", marker.ubicacion);
+                      return null;
+                    }
+                  })}
+                    
+                    
                   </Map>
                 </div>
 
@@ -156,9 +149,9 @@ function App() {
                   <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="category">Categoría:</label>
                     <select
-                      id="category"
-                      name="category"
-                      value={filters.category}
+                      id="calificacion2"
+                      name="calificacion2"
+                      value={filters.calificacion2}
                       onChange={handleFilterChange}
                       style={{ display: 'block', width: '100%', marginTop: '10px' }}
                     >
@@ -169,17 +162,17 @@ function App() {
                   </div>
 
                   <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="rating">Calificación mínima:</label>
+                    <label htmlFor="promedio_calificaciones">Calificación mínima:</label>
                     <select
-                      id="rating"
-                      name="rating"
-                      value={filters.rating}
+                      id="promedio_calificaciones"
+                      name="promedio_calificaciones"
+                      value={filters.promedio_calificaciones}
                       onChange={handleFilterChange}
                       style={{ display: 'block', width: '100%', marginTop: '10px' }}
                     >
                       <option value="all">Todas</option>
                       <option value="5">5 estrellas</option>
-                      <option value="4">4 estrellas o más</option>
+                      <option value="4.5">4 estrellas o más</option>
                       <option value="3">3 estrellas o más</option>
                     </select>
                   </div>
@@ -190,7 +183,7 @@ function App() {
               <div style={{ position: 'absolute', bottom: '20px', right: '20px' }}>
                 <Avatar
                   alt="Remy Sharp"
-                  src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b88c2eec-ec74-42b5-97ce-526979054230/d4ttuhp-85cedfc5-62bf-4d9b-817e-dc65b58d0c53.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2I4OGMyZWVjLWVjNzQtNDJiNS05N2NlLTUyNjk3OTA1NDIzMFwvZDR0dHVocC04NWNlZGZjNS02MmJmLTRkOWItODE3ZS1kYzY1YjU4ZDBjNTMucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.8XYBTwyc0TFXRE-cUbDuE0klXlIVgCbsNmIiioSj2UU" // URL de la imagen del avatar
+                  src="https://example.com/avatar.png"
                   sx={{ width: 56, height: 56, cursor: 'pointer' }}
                   onClick={handleAvatarClick}
                 />
@@ -198,7 +191,6 @@ function App() {
             </div>
           }
         />
-        {/* Ruta para la página de la red social */}
         <Route path="/social" element={<SocialPage />} />
       </Routes>
     </Router>
