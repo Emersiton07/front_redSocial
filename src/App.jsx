@@ -1,10 +1,14 @@
+import './App.css';
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Avatar, Card } from 'antd';
+const { Meta } = Card;
 import SocialPage from './SocialPage'; // Importar la página de red social
-import Avatar from '@mui/material/Avatar'; // Material UI Avatar para el componente
 
 function App() {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -38,7 +42,7 @@ function App() {
 
   const filteredMarkers = obras.filter((marker) => {
     return (
-      (filters.promedio_calificaciones === 'all' || marker.promedio_calificaciones.toString() === filters.promedio_calificaciones) 
+      (filters.promedio_calificaciones === 'all' || marker.promedio_calificaciones.toString() === filters.promedio_calificaciones)
       //&& (filters.rating === 'all' || marker.rating >= parseInt(filters.rating))
     );
   });
@@ -68,32 +72,48 @@ function App() {
               </div>
 
               {/* Contenedor para mapa, panel de información y filtros */}
-              <div style={{ display: 'flex', height: 'calc(100vh - 60px)', width: '100vw' }}>
+
+              <div
+                style={{ display: 'flex', height: 'calc(100vh - 60px)', width: '100vw' }}>
                 {/* Panel de información del marcador */}
-                <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                  {selectedMarker ? (
-                    <>
-                      <a href="#">
-                        <img className="rounded-t-lg" src={selectedMarker.imagenes} alt={selectedMarker.nombre} />
-                      </a>
-                      <div className="p-5">
-                        <a href="#">
-                          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"> {selectedMarker.nombre} </h5>
-                        </a>
-                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.descripcion}</p>
-                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.etiquetas}</p>
-                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{selectedMarker.promedio_calificaciones}</p>
-                        <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                          Read more
-                        </a>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="p-5 text-gray-500">
+                <Card className="rounded-sm"
+                  style={{
+                    width: 300,
+                  }}
+                  cover={
+                    selectedMarker ? (
+                      <img
+                        alt="{selectedMarker.nombre}"
+                        src={selectedMarker.imagenes || 'https://via.placeholder.com/300'}
+                      />
+                    ) : (
+                      <img
+                        alt="placeholder"
+                        src="https://via.placeholder.com/300"
+                      />
+                    )
+                  }
+                  actions={[
+                    <SettingOutlined key="setting" />,
+                    <EditOutlined key="edit" />,
+                    <EllipsisOutlined key="ellipsis" />,
+                  ]}
+                >
+                  {selectedMarker ? (<Meta
+
+                    avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+                    title={selectedMarker.nombre || 'Sin nombre'}
+                    description={selectedMarker.descripcion || 'Sin descripción disponible'}
+                  />) : (
+                    <div style={{ color: 'gray', padding: '10px' }}>
                       <p>No hay marcador seleccionado. Haz clic en un marcador en el mapa para ver más información.</p>
                     </div>
                   )}
-                </div>
+
+                </Card>
+
+
+
 
                 {/* Mapa de Mapbox */}
                 <div style={{ width: '60%', height: '100%' }}>
@@ -107,30 +127,30 @@ function App() {
                     mapStyle="mapbox://styles/mapbox/streets-v11"
                     mapboxAccessToken="pk.eyJ1IjoiZW1lcnNvbjA3IiwiYSI6ImNtNmNtM3IxczBrc3gyanE0aGN1eTlmOWYifQ.jw_Yp6JZCKeMeq0zEDzvmg"
                   >
-                  {filteredMarkers.map((marker) => {
-                    
-                    const lat  = marker.ubicacion.latitud;
-                    const lon  = marker.ubicacion.longitud;
-                    console.log("AQUI", lat); // Esto te ayuda a verificar si _id está presente
-                    console.log("AQUI 2", lon);
-                    if (!isNaN(lat) && !isNaN(lon)) {
-                      return (
-                        <Marker
-                          key={marker._id}
-                          latitude={lat}
-                          longitude={lon}
-                          onClick={() => handleMarkerClick(marker)}
-                          offsetTop={-30}
-                        />
-                      );
-                      
-                    } else {
-                      console.error("Latitud o Longitud inválidas:", marker.ubicacion);
-                      return null;
-                    }
-                  })}
-                    
-                    
+                    {filteredMarkers.map((marker) => {
+
+                      const lat = marker.ubicacion.latitud;
+                      const lon = marker.ubicacion.longitud;
+                      console.log("AQUI", lat); // Esto te ayuda a verificar si _id está presente
+                      console.log("AQUI 2", lon);
+                      if (!isNaN(lat) && !isNaN(lon)) {
+                        return (
+                          <Marker
+                            key={marker._id}
+                            latitude={lat}
+                            longitude={lon}
+                            onClick={() => handleMarkerClick(marker)}
+                            offsetTop={-30}
+                          />
+                        );
+
+                      } else {
+                        console.error("Latitud o Longitud inválidas:", marker.ubicacion);
+                        return null;
+                      }
+                    })}
+
+
                   </Map>
                 </div>
 
@@ -148,11 +168,12 @@ function App() {
                   <h3>Filtros</h3>
                   <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="category">Categoría:</label>
-                    <select
+                    <select className="w-full bg-transparent placeholder:text-red-400 text-red-700 text-sm border border-red-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-red-500 hover:border-red-300 shadow-sm focus:shadow appearance-none cursor-pointer"
                       id="calificacion2"
                       name="calificacion2"
                       value={filters.calificacion2}
                       onChange={handleFilterChange}
+
                       style={{ display: 'block', width: '100%', marginTop: '10px' }}
                     >
                       <option value="all">Todas</option>
@@ -163,7 +184,7 @@ function App() {
 
                   <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="promedio_calificaciones">Calificación mínima:</label>
-                    <select
+                    <select className="w-full bg-transparent placeholder:text-red-400 text-red-700 text-sm border border-red-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-red-500 hover:border-red-300 shadow-sm focus:shadow appearance-none cursor-pointer"
                       id="promedio_calificaciones"
                       name="promedio_calificaciones"
                       value={filters.promedio_calificaciones}
