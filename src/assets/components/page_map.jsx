@@ -6,7 +6,7 @@ import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card } from 'antd';
+import { Avatar, Card, Carousel } from 'antd';
 const { Meta } = Card;
 import SocialPage from './SocialPage'; // Importar la página de red social
 
@@ -74,22 +74,28 @@ function App() {
               {/* Contenedor para mapa, panel de información y filtros */}
 
               <div
-                style={{ display: 'flex', height: 'calc(100vh - 60px)', width: '100vw' }}>
+                style={{ display: 'flex', height: '100vh', width: '100vw' }}>
                 {/* Panel de información del marcador */}
-                <Card className="rounded-sm"
-                  style={{
-                    width: 300,
-                  }}
+                <Card
+                  className="rounded-sm"
+                  style={{ width: 300 }}
                   cover={
-                    selectedMarker ? (
-                      <img
-                        alt="{selectedMarker.nombre}"
-                        src={selectedMarker.imagenes || 'https://via.placeholder.com/300'}
-                      />
+                    selectedMarker && selectedMarker.imagenes?.length > 0 ? (
+                      <Carousel autoplay>
+                        {selectedMarker.imagenes.map((imgUrl, index) => (
+                          <img
+                            key={index}
+                            alt={selectedMarker.nombre || `Imagen ${index + 1}`}
+                            src={imgUrl}
+                            style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                          />
+                        ))}
+                      </Carousel>
                     ) : (
                       <img
                         alt="placeholder"
                         src="https://via.placeholder.com/300"
+                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                       />
                     )
                   }
@@ -99,24 +105,24 @@ function App() {
                     <EllipsisOutlined key="ellipsis" />,
                   ]}
                 >
-                  {selectedMarker ? (<Meta
-
-                    avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
-                    title={selectedMarker.nombre || 'Sin nombre'}
-                    description={selectedMarker.descripcion || 'Sin descripción disponible'}
-                  />) : (
+                  {selectedMarker ? (
+                    <Meta
+                      avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+                      title={selectedMarker.nombre || 'Sin nombre'}
+                      description={selectedMarker.descripcion || 'Sin descripción disponible'}
+                    />
+                  ) : (
                     <div style={{ color: 'gray', padding: '10px' }}>
                       <p>No hay marcador seleccionado. Haz clic en un marcador en el mapa para ver más información.</p>
                     </div>
                   )}
-
                 </Card>
 
 
 
 
                 {/* Mapa de Mapbox */}
-                <div style={{ width: '60%', height: '100%' }}>
+                <div style={{ flex: 1, height: '100%' }}>
                   <Map
                     initialViewState={{
                       latitude: 5.5353,
