@@ -1,0 +1,45 @@
+/* src/App.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  height: calc(100vh - 60px); /* Ajusta la altura según tu barra superior */
+}
+
+.map-container {
+  flex: 1; /* Asegura que el mapa ocupe el espacio restante */
+  height: 100%;
+}
+
+.filters {
+  width: 25%; /* Ajusta este valor según tu preferencia */
+  height: 100%;
+  background-color: black;
+  border: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
