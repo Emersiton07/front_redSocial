@@ -42,7 +42,7 @@ function App() {
 
   const filteredMarkers = obras.filter((marker) => {
     return (
-      (filters.promedio_calificaciones === 'all' || marker.promedio_calificaciones.toString() === filters.promedio_calificaciones)
+      (filters.promedio_calificaciones === 'all' || marker.promedio_calificaciones.toString() >= filters.promedio_calificaciones)
       //&& (filters.rating === 'all' || marker.rating >= parseInt(filters.rating))
     );
   });
@@ -190,19 +190,20 @@ function App() {
 
                 {/* Panel de filtros */}
                 <div
+                  className='overflow-auto'
                   style={{
                     width: '20%',
                     height: '100%',
                     padding: '20px',
-                    backgroundColor: 'black',
+                    backgroundColor: 'white',
                     border: '1px solid #ddd',
                     overflowY: 'auto',
                   }}
                 >
                   <h3>Filtros</h3>
                   <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="category">Categoría:</label>
-                    <select className="w-full bg-transparent placeholder:text-red-400 text-red-700 text-sm border border-red-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-red-500 hover:border-red-300 shadow-sm focus:shadow appearance-none cursor-pointer"
+                    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Filtro Por Decidir:</label>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       id="calificacion2"
                       name="calificacion2"
                       value={filters.calificacion2}
@@ -217,8 +218,8 @@ function App() {
                   </div>
 
                   <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="promedio_calificaciones">Calificación mínima:</label>
-                    <select className="w-full bg-transparent placeholder:text-red-400 text-red-700 text-sm border border-red-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-red-500 hover:border-red-300 shadow-sm focus:shadow appearance-none cursor-pointer"
+                    <label htmlFor="promedio_calificaciones" className="block mb-2 text-sm font-medium text-gray-900 dark:text-Black">Calificación mínima:</label>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       id="promedio_calificaciones"
                       name="promedio_calificaciones"
                       value={filters.promedio_calificaciones}
@@ -227,10 +228,11 @@ function App() {
                     >
                       <option value="all">Todas</option>
                       <option value="5">5 estrellas</option>
-                      <option value="4.5">4 estrellas o más</option>
+                      <option value="4">4 estrellas o más</option>
                       <option value="3">3 estrellas o más</option>
                     </select>
                   </div>
+                  <button type="button" className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Crear Ruta</button>
                 </div>
               </div>
 
