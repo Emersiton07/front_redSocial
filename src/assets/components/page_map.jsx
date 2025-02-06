@@ -9,6 +9,7 @@ import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/ico
 import { Avatar, Card, Carousel } from 'antd';
 const { Meta } = Card;
 import SocialPage from './SocialPage'; // Importar la página de red social
+import { Source, Layer } from 'react-map-gl';
 
 function App() {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -16,6 +17,12 @@ function App() {
     promedio_calificaciones: 'all',
   });
   const [obras, setObras] = useState([]); // Aquí guardaremos las obras obtenidas desde el backend
+  const [selectedObras, setSelectedObras] = useState([]);
+  const [routeData, setRouteData] = useState(null);
+  const [isRoutePanelOpen, setIsRoutePanelOpen] = useState(false);
+
+
+
 
   useEffect(() => {
     // Hacer la solicitud para obtener las obras desde el backend
@@ -39,6 +46,46 @@ function App() {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleSelectObra = (obra) => {
+    setSelectedObras((prev) => {
+      const alreadySelected = prev.find((o) => o._id === obra._id);
+      if (alreadySelected) {
+        return prev.filter((o) => o._id !== obra._id);
+      } else {
+        return [...prev, obra];
+      }
+    });
+  };
+
+
+
+  const getRoute = () => {
+    if (selectedObras.length < 2) {
+      alert('Selecciona al menos dos obras para generar una ruta.');
+      return;
+    }
+
+    const coordinates = selectedObras.map((obra) => [
+      obra.ubicacion.longitud,
+      obra.ubicacion.latitud,
+    ]);
+
+    setRouteData({
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates,
+          },
+        },
+      ],
+    });
+  };
+
+
 
   const filteredMarkers = obras.filter((marker) => {
     return (
@@ -183,6 +230,19 @@ function App() {
                         return null;
                       }
                     })}
+                    {routeData && (
+                      <Source id="route" type="geojson" data={routeData}>
+                        <Layer
+                          id="routeLayer"
+                          type="line"
+                          paint={{
+                            "line-color": "#ff0000",
+                            "line-width": 4,
+                          }}
+                        />
+                      </Source>
+                    )}
+
 
 
                   </Map>
@@ -232,8 +292,38 @@ function App() {
                       <option value="3">3 estrellas o más</option>
                     </select>
                   </div>
-                  <button type="button" className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Crear Ruta</button>
+                  {/* Botón para abrir/cerrar el panel de selección de obras */}
+                  <button
+                    onClick={() => setIsRoutePanelOpen(!isRoutePanelOpen)}
+                    className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    {isRoutePanelOpen ? "Cerrar Panel de Rutas" : "Seleccionar Obras"}
+                    
+                  </button>
                 </div>
+
+                {/* Panel de selección de obras */}
+                {isRoutePanelOpen && (
+                  <div className="absolute top-16 left-4 bg-white p-4 shadow-lg rounded-lg w-64 max-h-96 overflow-auto">
+                    <h3 className="text-lg font-semibold">Seleccionar Obras</h3>
+                    {obras.map((obra) => (
+                      <div key={obra._id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedObras.some((o) => o._id === obra._id)}
+                          onChange={() => handleSelectObra(obra)}
+                        />
+                        <label>{obra.nombre || "Obra sin nombre"}</label>
+                      </div>
+                    ))}
+                    <button
+                      onClick={getRoute}
+                      className="mt-4 bg-green-500 text-white px-4 py-2 rounded w-full"
+                    >
+                      Generar Ruta
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Avatar en la esquina inferior derecha */}
