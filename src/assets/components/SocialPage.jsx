@@ -7,6 +7,7 @@ export default function SocialPage() {
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [nuevoComentario, setNuevoComentario] = useState("");
 
+  
   useEffect(() => {
     axios.get('https://back-redsocial-3.onrender.com/obras/obtenerObras')
       .then((response) => {
