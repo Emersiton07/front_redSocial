@@ -5,10 +5,11 @@ import axios from 'axios';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Link } from 'react-router-dom';
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Carousel } from 'antd';
+import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
+import { Avatar, Card, Carousel, Modal, Rate} from 'antd';
 const { Meta } = Card; // Importar la página de red social
 import { Source, Layer } from 'react-map-gl';
+
 
 function App() {
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -19,6 +20,9 @@ function App() {
   const [selectedObras, setSelectedObras] = useState([]);
   const [routeData, setRouteData] = useState(null);
   const [isRoutePanelOpen, setIsRoutePanelOpen] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rating, setRating] = useState(0);
 
 
 
@@ -100,6 +104,22 @@ function App() {
       alert('Selecciona una obra primero.');
     }
   };
+  //METODOS DE LA CARD DE LA OBRA EN EL MAPA
+  const handleLike = () => {
+    setLikes(likes + 1);
+  };
+  const handleRate = () => {
+    setIsModalOpen(true);
+  };
+  
+  const handleOk = () => {
+    console.log("Calificación enviada:", rating);
+    setIsModalOpen(false);
+  };
+  
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div style={{ height: '100vh', position: 'relative' }}>
@@ -125,7 +145,7 @@ function App() {
               <li>
                 <Link
                   to="/socialpage"
-                  className="block py-2 px-3 md:p-0 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:dark:text-blue-500"
+                  className="block py-2 px-3 md:p-0 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-white-700 md:dark:text-white-500"
                 >
                   Red Social
                 </Link>
@@ -165,15 +185,25 @@ function App() {
             ) : (
               <img
                 alt="placeholder"
-                src="https://via.placeholder.com/300"
+                src="https://img.freepik.com/vector-gratis/mapa-ciudad-mar-palmeras_23-2147616616.jpg"
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }}
               />
             )
           }
           actions={[
-            <SettingOutlined key="setting" />,
-            <EditOutlined key="edit" />,
-            <EllipsisOutlined key="ellipsis" />,
+            <span key="like" onClick={handleLike} style={{ cursor: "pointer" }}>
+              <LikeOutlined /> {likes}
+            </span>,
+            <MessageOutlined key="comment" />,
+            <>
+    <span key="rate" onClick={handleRate} style={{ cursor: "pointer" }}>
+      <StarOutlined /> Calificar
+    </span>
+
+    <Modal title="Calificar publicación" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Rate onChange={(value) => setRating(value)} value={rating} />
+    </Modal>
+  </>
           ]}
         >
           {selectedMarker ? (
@@ -253,21 +283,7 @@ function App() {
           }}
         >
           <h3>Filtros</h3>
-          <div style={{ marginBottom: '20px' }}>
-            <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Filtro Por Decidir:</label>
-            <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              id="calificacion2"
-              name="calificacion2"
-              value={filters.calificacion2}
-              onChange={handleFilterChange}
 
-              style={{ display: 'block', width: '100%', marginTop: '10px' }}
-            >
-              <option value="all">Todas</option>
-              <option value="historical">Histórico</option>
-              <option value="religious">Religioso</option>
-            </select>
-          </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label htmlFor="promedio_calificaciones" className="block mb-2 text-sm font-medium text-gray-900 dark:text-Black">Calificación mínima:</label>
