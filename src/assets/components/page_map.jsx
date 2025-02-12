@@ -4,11 +4,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, Card, Carousel } from 'antd';
-const { Meta } = Card;
-import SocialPage from './SocialPage'; // Importar la página de red social
+const { Meta } = Card; // Importar la página de red social
 import { Source, Layer } from 'react-map-gl';
 
 function App() {
