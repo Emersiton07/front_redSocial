@@ -6,12 +6,12 @@ import Map, { Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Link } from 'react-router-dom';
 import { LikeOutlined, MessageOutlined, StarOutlined } from '@ant-design/icons';
-import { Avatar, Card, Carousel, Modal, Rate} from 'antd';
-const { Meta } = Card; // Importar la página de red social
+import { Avatar, Card, Carousel, Modal, Rate } from 'antd';
 import { Source, Layer } from 'react-map-gl';
 
 
 function App() {
+  const { Meta } = Card;
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [filters, setFilters] = useState({
     promedio_calificaciones: 'all',
@@ -111,12 +111,12 @@ function App() {
   const handleRate = () => {
     setIsModalOpen(true);
   };
-  
+
   const handleOk = () => {
     console.log("Calificación enviada:", rating);
     setIsModalOpen(false);
   };
-  
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -196,14 +196,14 @@ function App() {
             </span>,
             <MessageOutlined key="comment" />,
             <>
-    <span key="rate" onClick={handleRate} style={{ cursor: "pointer" }}>
-      <StarOutlined /> Calificar
-    </span>
+              <span key="rate" onClick={handleRate} style={{ cursor: "pointer" }}>
+                <StarOutlined /> Calificar
+              </span>
 
-    <Modal title="Calificar publicación" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-      <Rate onChange={(value) => setRating(value)} value={rating} />
-    </Modal>
-  </>
+              <Modal title="Calificar publicación" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <Rate onChange={(value) => setRating(value)} value={rating} />
+              </Modal>
+            </>
           ]}
         >
           {selectedMarker ? (
